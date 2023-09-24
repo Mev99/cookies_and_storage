@@ -2,33 +2,37 @@ import { Router } from "express";
 import User from "../models/user.model.js";
 const sessionRouter = Router()
 
-sessionRouter.get('/login', async (req, res) => {
+sessionRouter.get('/', async (req, res) => {
     res.render('login');
 });
 
-
-
-sessionRouter.post("/register", async (req, res) => {
+sessionRouter.post("/", async (req, res) => {
     try {
-        const { first_name, last_name, email, age, password } = req.body
+        const { email, password } = req.body
 
-        const user = new User({ first_name, last_name, email, age, password })
-        await user.save
-        res.redirect("/sessions/login")
+        if (!password || !email) {
+            console.log("password or email is missing")
+        }
 
+        const user = await User.findOne({ email: email }, { first_name: 1, last_name: 1, email: 1, age: 1, role:1 })
+        console.log(user)
+
+        req.session.user = user
+
+        if (req.session.user.role === "admin") {
+            res.redirect('/products/admin')
+        } else {
+            res.redirect('/products')
+        }
+        
     } catch (error) {
         console.log(error)
     }
 })
 
-sessionRouter.get("/profile", (req, res) => {
-    if (!req.session.user) {
-        return res.redirect("/login")
-
-    }
-    const { first_name, last_name, email, age, password } = req.session.user
-    res.render("profile", { first_name, last_name, email, age })
-})
-
+sessionRouter.get('/logout', async (req, res) => {
+    delete req.session.user;
+    res.redirect('/sessions/login');
+});
 
 export default sessionRouter
