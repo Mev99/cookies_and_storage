@@ -6,6 +6,8 @@ import handlebars from "express-handlebars";
 import bodyParser from "body-parser";
 import { engine } from "express-handlebars";
 import mongoose from "mongoose";
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
 
 import sessionRouter from "./router/sessions.js";
 import registerRouter from "./router/register.router.js";
@@ -31,6 +33,9 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }));
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.engine(
         "handlebars",

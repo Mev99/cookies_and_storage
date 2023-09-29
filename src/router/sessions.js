@@ -11,12 +11,13 @@ sessionRouter.post("/", async (req, res) => {
         const { email, password } = req.body
 
         if (!password || !email) {
-            console.log("password or email is missing")
+            return console.log("password or email is missing")
         }
 
-        const user = await User.findOne({ email: email }, { first_name: 1, last_name: 1, email: 1, age: 1, role:1 })
+        let user = await User.findOne({ email: email }, { first_name: 1, last_name: 1, email: 1, age: 1, role: 1, password })
         console.log(user)
-
+        console.log("REQ ONE: ", req.session.user)
+        
         req.session.user = user
 
         if (req.session.user.role === "admin") {
@@ -24,7 +25,8 @@ sessionRouter.post("/", async (req, res) => {
         } else {
             res.redirect('/products')
         }
-        
+        res.send({payload: user})
+
     } catch (error) {
         console.log(error)
     }
