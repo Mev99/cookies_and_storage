@@ -33,18 +33,19 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }));
+
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
 
 app.engine(
-        "handlebars",
-        engine({
-              extname: "handlebars",
-              defaultLayout: false,
-              layoutsDir: "views/layouts/"
-            })
-          );
+    "handlebars",
+    engine({
+        extname: "handlebars",
+        defaultLayout: false,
+        layoutsDir: "views/layouts/"
+    })
+);
 app.set("view engine", "handlebars")
 app.set("views", __dirname + '/views')
 
@@ -52,7 +53,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/sessions/login", sessionRouter)
-app.use("/sessions/register", registerRouter )
+app.use("/sessions/register", registerRouter)
 app.use("/products", productRouter)
 
 
